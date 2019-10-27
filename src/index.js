@@ -15,18 +15,19 @@ import App from './containers/App/App';
 // root
 const rootReducer = combineReducers({searchRobots, requestRobots})
 
-let store
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    store = createStore(rootReducer, composeWithDevTools({
+const getStore = () => !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+    ? createStore(rootReducer, composeWithDevTools({
         trace: true,
         traceLimit: 25,
       })(
-        applyMiddleware(invariant(), thunkMiddleWare, createLogger()),
+        applyMiddleware(
+            invariant(),
+            thunkMiddleWare,
+            createLogger()
+        ),
         // other enhancers
     ))
-} else {
-    store = createStore(rootReducer, applyMiddleware(thunkMiddleWare))
-}
+    : createStore(rootReducer, applyMiddleware(thunkMiddleWare))
 
-ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
+ReactDOM.render(<Provider store={getStore()}><App /></Provider>, document.getElementById('root'));
 registerServiceWorker();
